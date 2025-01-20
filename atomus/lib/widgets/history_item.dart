@@ -40,7 +40,7 @@ class HistoryItem extends StatelessWidget {
             return TradeItem(
               operacao: operacao,
               date: date,
-              onDelete: () => tradeService.deleteTrade(operacao.id),
+              onDelete: () => tradeService.deleteTrade(operacao.id!),
             );
           },
         );
@@ -71,13 +71,13 @@ class _TradeItemState extends State<TradeItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
+        borderRadius: BorderRadius.circular(10),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.grey[900],
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
             children: [

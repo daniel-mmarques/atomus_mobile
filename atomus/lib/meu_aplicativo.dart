@@ -1,4 +1,5 @@
-import '/pages/home_page.dart';
+import 'package:atomus/pages/splashScreen.dart';
+
 import 'package:flutter/material.dart';
 
 class MeuAplicativo extends StatelessWidget {
@@ -7,12 +8,9 @@ class MeuAplicativo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Cripto Moedas',
+      title: 'Atomus',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: HomePage(),
+      home: Splashscreen(),
     );
   }
 }

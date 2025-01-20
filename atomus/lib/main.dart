@@ -1,6 +1,10 @@
+import 'package:atomus/repositories/broker_repository.dart';
 import 'package:atomus/repositories/portfolio_repository.dart';
+import 'package:atomus/repositories/product_repository.dart';
 import 'package:atomus/repositories/search_repository.dart';
 import 'package:atomus/repositories/trade_repository.dart';
+import 'package:atomus/services/broker_service.dart';
+import 'package:atomus/services/product_service.dart';
 import 'package:atomus/services/search_service.dart';
 import 'package:atomus/services/trade_service.dart';
 import 'package:dio/dio.dart';
@@ -35,6 +39,15 @@ void main() async {
         ChangeNotifierProvider(
           create: (context) => TradeService(context.read<TradeRepository>()),
         ),
+        Provider(create: (_) => ProductRepository(dio)),
+        ChangeNotifierProvider(
+          create: (context) =>
+              ProductService(context.read<ProductRepository>()),
+        ),
+        Provider(create: (_) => BrokerRepository(dio)),
+        ChangeNotifierProvider(
+          create: (context) => BrokerService(context.read<BrokerRepository>()),
+        ),
       ],
       child: MeuAplicativo(),
     ),
@@ -46,7 +59,7 @@ Dio _initializeDio() {
     baseUrl: 'http://10.0.2.2:8080',
     headers: {
       'Authorization':
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgQXRvbXVzIiwic3ViIjoicmFmYWVsQGdtYWlsLmNvbSIsImV4cCI6MTczNzA1Nzg0OX0.Z303K47ZWtFzICqdpjQfgmntMCsMRP5d_qhyAkClt5U'
+          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJBUEkgQXRvbXVzIiwic3ViIjoicmFmYWVsQGdtYWlsLmNvbSIsImV4cCI6MTczNzIzNDc3M30.EqHYKOcv5_EdDuhdOentn0o_dReg1xS0pULn1j8Be8Q'
     },
   ));
 }

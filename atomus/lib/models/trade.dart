@@ -1,17 +1,17 @@
 class Trade {
-  int id;
-  int userId;
-  String tradeType;
-  DateTime tradeDate;
-  int brokerId;
-  int productId;
-  String title;
-  int quantity;
-  double unitPrice;
-  double fees;
+  final int? id;
+  final int userId;
+  final String tradeType;
+  final DateTime tradeDate;
+  final int brokerId;
+  final int productId;
+  final String title;
+  final int quantity;
+  final double unitPrice;
+  final double fees;
 
   Trade({
-    required this.id,
+    this.id,
     required this.userId,
     required this.tradeType,
     required this.tradeDate,

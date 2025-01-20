@@ -1,6 +1,7 @@
+import 'package:atomus/models/portfolio/portfolio_product_data.dart';
 import 'package:atomus/pages/trade_page.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/portfolio_service.dart';
 
@@ -11,11 +12,15 @@ class PortfolioPage extends StatefulWidget {
   _PortfolioPageState createState() => _PortfolioPageState();
 }
 
+enum ChartLevel { product, ticker }
+
 class _PortfolioPageState extends State<PortfolioPage> {
   int touchedIndex = -1;
-  String ticker = 'B3SA3';
+  String ticker = '';
   double value = 0;
   double profiability = 0;
+  ChartLevel currentLevel = ChartLevel.product;
+  PortfolioProductData? selectedProduct;
 
   @override
   void initState() {
@@ -132,42 +137,60 @@ class _PortfolioPageState extends State<PortfolioPage> {
                 aspectRatio: 1,
                 child: PieChart(
                   PieChartData(
-                    sectionsSpace: 5,
-                    centerSpaceRadius: 110,
-                    sections: portfolioService.generatePieChartSections(0),
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              pieTouchResponse == null ||
-                              pieTouchResponse.touchedSection == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex = pieTouchResponse
-                              .touchedSection!.touchedSectionIndex;
-                        });
-                      },
-                    ),
-                  ),
+                      sectionsSpace: 5,
+                      centerSpaceRadius: 110,
+                      sections: currentLevel == ChartLevel.product
+                          ? portfolioService
+                              .generateProductSections(touchedIndex)
+                          : portfolioService.generateTickerSections(
+                              touchedIndex, selectedProduct),
+                      pieTouchData: PieTouchData(
+                        touchCallback: (FlTouchEvent event, pieTouchResponse) {
+                          setState(() {
+                            if (!event.isInterestedForInteractions ||
+                                pieTouchResponse == null ||
+                                pieTouchResponse.touchedSection == null) {
+                              touchedIndex = -1;
+                              return;
+                            }
+                            touchedIndex = pieTouchResponse
+                                .touchedSection!.touchedSectionIndex;
+                            print('Touched index: $touchedIndex');
+
+                            if (event is FlTapUpEvent) {
+                              if (currentLevel == ChartLevel.product) {
+                                selectedProduct = portfolioService
+                                    .portfolioData!
+                                    .portfolioProductData[touchedIndex];
+                                currentLevel = ChartLevel.ticker;
+                              } else {
+                                currentLevel = ChartLevel.product;
+                                selectedProduct = null;
+                              }
+                              print('Current Level: $currentLevel');
+                            }
+                          });
+                        },
+                      )),
                 ),
               ),
-              Column(
-                children: [
-                  Text(
-                    ticker,
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  Text(
-                    value.toStringAsFixed(2),
-                    style: TextStyle(color: Colors.white, fontSize: 22),
-                  ),
-                  Text(
-                    profiability.toStringAsFixed(2),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              )
+              if (currentLevel == ChartLevel.ticker)
+                Column(
+                  children: [
+                    Text(
+                      selectedProduct?.product ?? '',
+                      style: TextStyle(color: Colors.white, fontSize: 24),
+                    ),
+                    Text(
+                      value.toStringAsFixed(2),
+                      style: TextStyle(color: Colors.white, fontSize: 22),
+                    ),
+                    Text(
+                      profiability.toStringAsFixed(2),
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ],
+                )
             ],
           );
   }

@@ -16,15 +16,14 @@ class TradeService extends ChangeNotifier {
     try {
       isLoading = true;
       hasError = false;
-      notifyListeners();
 
       trades = await tradeRepository.getHistorico();
       isLoading = false;
-      notifyListeners();
     } catch (e) {
       hasError = true;
       errorMessage = e.toString();
       isLoading = false;
+    } finally {
       notifyListeners();
     }
   }
@@ -33,15 +32,14 @@ class TradeService extends ChangeNotifier {
     try {
       isLoading = true;
       hasError = false;
-      notifyListeners();
 
       trades = await tradeRepository.getHistoricoProduto(product);
       isLoading = false;
-      notifyListeners();
     } catch (e) {
       hasError = true;
       errorMessage = e.toString();
       isLoading = false;
+    } finally {
       notifyListeners();
     }
   }
@@ -50,15 +48,14 @@ class TradeService extends ChangeNotifier {
     try {
       isLoading = true;
       hasError = false;
-      notifyListeners();
 
       trades = await tradeRepository.getHistoricoTitulo(product, ticker);
       isLoading = false;
-      notifyListeners();
     } catch (e) {
       hasError = true;
       errorMessage = e.toString();
       isLoading = false;
+    } finally {
       notifyListeners();
     }
   }
@@ -72,6 +69,47 @@ class TradeService extends ChangeNotifier {
       hasError = true;
       errorMessage = e.toString();
       notifyListeners();
+    }
+  }
+
+  Future<void> saveTrade({
+    required String tradeType,
+    required DateTime tradeDate,
+    required int brokerId,
+    required int productId,
+    required String title,
+    required int quantity,
+    required double unitPrice,
+    required double fees,
+  }) async {
+    if (quantity <= 0) {
+      throw ArgumentError('A quantidade deve ser maior que zero.');
+    }
+    if (unitPrice < 0 || fees < 0) {
+      throw ArgumentError('Preço unitário e taxas não podem ser negativos.');
+    }
+
+    try {
+      final trade = Trade(
+        userId: 7,
+        tradeType: tradeType,
+        tradeDate: tradeDate,
+        brokerId: brokerId,
+        productId: productId,
+        title: title,
+        quantity: quantity,
+        unitPrice: unitPrice,
+        fees: fees,
+      );
+
+      await tradeRepository.save(trade);
+      notifyListeners();
+    } catch (e, stackTrace) {
+      debugPrint('Erro ao salvar trade: $e\n$stackTrace');
+      hasError = true;
+      errorMessage = e.toString();
+      notifyListeners();
+      rethrow;
     }
   }
 

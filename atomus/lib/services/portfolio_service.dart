@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:atomus/models/portfolio/portfolio_product_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -46,43 +44,67 @@ class PortfolioService extends ChangeNotifier {
     }
   }
 
-  Color _generateColor() {
-    double saturation = 0.8;
-    double lightness = 0.4;
-
-    Random random = Random();
-    double hue = random.nextDouble() * 360;
-
-    HSLColor hslColor = HSLColor.fromAHSL(1.0, hue, saturation, lightness);
-    Color rgbColor = hslColor.toColor();
-
-    return rgbColor;
+  Color _getColor(int index) {
+    final colors = [
+      Colors.blue,
+      Colors.red,
+      Colors.green,
+      Colors.orange,
+      Colors.purple
+    ];
+    return colors[index % colors.length];
   }
 
-  List<PieChartSectionData> generatePieChartSections(int? touchedIndex) {
+  List<PieChartSectionData> generateProductSections(int? touchedIndex) {
     List<PortfolioProductData> products = portfolioData!.portfolioProductData;
     if (products.isEmpty || totalAmount <= 0) return [];
 
     List<PieChartSectionData> sections = [];
 
-    for (var product in products) {
-      for (var ticker in product.portfolioTickerData) {
-        final percentage = ticker.totalAmount / totalAmount * 100;
-        final isTouched =
-            touchedIndex != null && touchedIndex == sections.length;
+    for (int i = 0; i < products.length; i++) {
+      final product = products[i];
+      final percentage = product.totalAmount / totalAmount * 100;
+      final isTouched = touchedIndex != null && touchedIndex == i;
 
-        sections.add(PieChartSectionData(
-          color: _generateColor(),
-          value: percentage,
-          title: '${percentage.floor().toString()}%',
-          radius: isTouched ? 70.0 : 55.0,
-          titleStyle: TextStyle(
-            fontSize: isTouched ? 22.0 : 18.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ));
-      }
+      sections.add(PieChartSectionData(
+        color: _getColor(i),
+        value: percentage,
+        title: '${percentage.floor()}%',
+        radius: isTouched ? 65.0 : 50.0,
+        titleStyle: TextStyle(
+          fontSize: isTouched ? 20.0 : 16.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ));
+    }
+
+    return sections;
+  }
+
+  List<PieChartSectionData> generateTickerSections(
+      int? touchedIndex, PortfolioProductData? product) {
+    if (product == null || product.portfolioTickerData.isEmpty) return [];
+
+    List<PieChartSectionData> sections = [];
+    final total = product.totalAmount;
+
+    for (int i = 0; i < product.portfolioTickerData.length; i++) {
+      final ticker = product.portfolioTickerData[i];
+      final percentage = ticker.totalAmount / total * 100;
+      final isTouched = touchedIndex != null && touchedIndex == i;
+
+      sections.add(PieChartSectionData(
+        color: _getColor(i),
+        value: percentage,
+        title: '${percentage.floor()}%',
+        radius: isTouched ? 65.0 : 50.0,
+        titleStyle: TextStyle(
+          fontSize: isTouched ? 20.0 : 16.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      ));
     }
 
     return sections;

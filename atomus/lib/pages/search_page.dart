@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/ticker/ticker_data.dart';
 import '../services/search_service.dart';
 import '../widgets/ticker_square_card.dart';
-import '../widgets/ticker_retangular_card.dart';
+import '../widgets/ticker_list_card.dart';
 import 'ticker_details_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   Future<List<TickerData>>? _tickerListFuture;
-  final List<TickerData> _selecionadas = [];
+  final List<TickerData> _favoritadas = [];
   bool _showSelecionadas = false;
   bool _isIconOne = true;
   String _searchQuery = '';
@@ -74,10 +74,10 @@ class _SearchPageState extends State<SearchPage> {
 
   void _alternarSelecao(TickerData tickerData) {
     setState(() {
-      if (_selecionadas.contains(tickerData)) {
-        _selecionadas.remove(tickerData);
+      if (_favoritadas.contains(tickerData)) {
+        _favoritadas.remove(tickerData);
       } else {
-        _selecionadas.add(tickerData);
+        _favoritadas.add(tickerData);
       }
     });
   }
@@ -98,7 +98,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 30),
+        padding: const EdgeInsets.only(left: 6, right: 6, top: 35),
         child: Column(
           children: [
             Row(
@@ -132,34 +132,6 @@ class _SearchPageState extends State<SearchPage> {
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      _showSelecionadas = !_showSelecionadas;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.bounceInOut,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _showSelecionadas
-                            ? [Colors.yellow, Colors.deepOrange]
-                            : [Colors.blueGrey, Colors.grey],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      _showSelecionadas ? Icons.star : Icons.star_border,
-                      size: 35,
-                      color: _showSelecionadas ? Colors.black : Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
                       _isIconOne = !_isIconOne;
                     });
                   },
@@ -186,6 +158,50 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showSelecionadas = !_showSelecionadas;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[900],
+                      borderRadius: BorderRadius.circular(20),
+                      border: _showSelecionadas
+                          ? Border.all(width: 0.5, color: Colors.white70)
+                          : Border(),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _showSelecionadas ? Icons.star : Icons.star_border,
+                          color:
+                              _showSelecionadas ? Colors.amber : Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Favoritas',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
             Expanded(
               child: _showSelecionadas
                   ? _buildSelecionadasGrid()
@@ -198,7 +214,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSelecionadasGrid() {
-    if (_selecionadas.isEmpty) {
+    if (_favoritadas.isEmpty) {
       return const Center(
         child: Text(
           'Nenhum ativo selecionado.',
@@ -215,21 +231,21 @@ class _SearchPageState extends State<SearchPage> {
               crossAxisSpacing: 8.0,
               mainAxisSpacing: 8.0,
             ),
-            itemCount: _selecionadas.length,
+            itemCount: _favoritadas.length,
             itemBuilder: (context, index) {
-              final ativo = _selecionadas[index];
+              final ativo = _favoritadas[index];
               return TickerSquareCard(
                 tickerData: ativo,
-                selecionadas: _selecionadas,
+                favoritadas: _favoritadas,
                 mostrarDetalhes: _mostrarDetalhes,
                 alternarSelecao: _alternarSelecao,
               );
             },
           )
         : ListView.builder(
-            itemCount: _selecionadas.length,
+            itemCount: _favoritadas.length,
             itemBuilder: (context, index) {
-              final ativo = _selecionadas[index];
+              final ativo = _favoritadas[index];
               return ListTile(
                 leading:
                     const Icon(Icons.check_circle, color: Colors.amberAccent),
@@ -276,16 +292,16 @@ class _SearchPageState extends State<SearchPage> {
               ? GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 1.2,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 1.3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
                   ),
                   itemCount: filteredTickers.length,
                   itemBuilder: (context, index) {
                     final ativo = filteredTickers[index];
                     return TickerSquareCard(
                       tickerData: ativo,
-                      selecionadas: _selecionadas,
+                      favoritadas: _favoritadas,
                       mostrarDetalhes: _mostrarDetalhes,
                       alternarSelecao: _alternarSelecao,
                     );
@@ -295,8 +311,9 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: filteredTickers.length,
                   itemBuilder: (context, index) {
                     final ativo = filteredTickers[index];
-                    return TickerRetangularCard(
-                      ativo: ativo,
+                    return TickerListCard(
+                      tickerData: ativo,
+                      favoritadas: _favoritadas,
                       mostrarDetalhes: _mostrarDetalhes,
                       alternarSelecao: _alternarSelecao,
                     );

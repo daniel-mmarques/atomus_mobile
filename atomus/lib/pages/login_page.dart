@@ -43,19 +43,13 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 32),
             // Botão de login
             ElevatedButton(
-              onPressed: () {
-                // Ação de login
-                print('Login pressionado');
-              },
+              onPressed: () {},
               child: Text('Entrar'),
             ),
             SizedBox(height: 16),
             // Link para registro ou recuperação de senha
             TextButton(
-              onPressed: () {
-                // Navegar para outra página
-                print('Esqueceu a senha pressionado');
-              },
+              onPressed: () {},
               child: Text('Esqueceu a senha?'),
             ),
           ],
