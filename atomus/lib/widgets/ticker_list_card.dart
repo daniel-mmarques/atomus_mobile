@@ -19,9 +19,9 @@ class TickerListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradientColor = tickerData.change > 0
-        ? Colors.green
+        ? Color(0xFF16C784)
         : tickerData.change < 0
-            ? Colors.red
+            ? Color(0xFFF23D4C)
             : Colors.grey;
 
     return Container(
@@ -31,14 +31,14 @@ class TickerListCard extends StatelessWidget {
           begin: Alignment.centerRight,
           end: Alignment.centerLeft,
           colors: [
-            gradientColor.withAlpha(50),
+            gradientColor.withAlpha(60),
             Colors.transparent,
           ],
           stops: [0.2, 1],
         ),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: gradientColor.withAlpha(60),
+          color: gradientColor.withAlpha(80),
           width: 1,
         ),
       ),

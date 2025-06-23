@@ -20,9 +20,9 @@ class TickerSquareCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradientColor = tickerData.change > 0
-        ? Colors.green
+        ? Color(0xFF16C784)
         : tickerData.change < 0
-            ? Colors.red
+            ? Color(0xFFF23D4C)
             : Colors.blueGrey;
 
     final bool isSelecionado = favoritadas.contains(tickerData);
@@ -35,13 +35,13 @@ class TickerSquareCard extends StatelessWidget {
             begin: Alignment.bottomCenter,
             end: const Alignment(0, -1),
             colors: [
-              gradientColor.withAlpha(65),
+              gradientColor.withAlpha(60),
               Colors.transparent,
             ],
           ),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: gradientColor.withAlpha(75),
+            color: gradientColor.withAlpha(80),
             width: 1.5,
           ),
         ),
@@ -74,13 +74,13 @@ class TickerSquareCard extends StatelessWidget {
                 Text(
                   tickerData.name,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: Colors.white70,
                       ),
                   overflow: TextOverflow.ellipsis,
                 ),
                 Container(
-                  height: 55,
+                  height: 65,
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: LineChart(
                     LineChartData(

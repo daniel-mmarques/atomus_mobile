@@ -1,6 +1,6 @@
 import 'package:atomus/models/broker.dart';
 import 'package:atomus/models/product.dart';
-import 'package:atomus/pages/portfolio_page.dart';
+import 'package:atomus/pages/home_page.dart';
 import 'package:atomus/services/broker_service.dart';
 import 'package:atomus/services/product_service.dart';
 import 'package:atomus/services/trade_service.dart';
@@ -88,21 +88,16 @@ class _TradePageState extends State<TradePage> {
           barrierDismissible: false,
           builder: (context) {
             return Dialog(
-              backgroundColor: Colors.black,
+              backgroundColor: Color(0xFF050811),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Lottie.asset(
                     'lib/animations/checkAnimation.json',
                     backgroundLoading: true,
-                    width: 150,
-                    height: 150,
+                    width: 200,
+                    height: 200,
                     repeat: false,
-                  ),
-                  const SizedBox(height: 16),
-                  const Text(
-                    "Negociação salva com sucesso!",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ],
               ),
@@ -110,15 +105,13 @@ class _TradePageState extends State<TradePage> {
           },
         );
 
-        // Aguarda 2 segundos e redireciona para PortfolioPage
-        await Future.delayed(const Duration(seconds: 2));
-        Navigator.pop(context); // Fecha o diálogo
+        await Future.delayed(const Duration(seconds: 3));
+        Navigator.pop(context);
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const PortfolioPage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } catch (e) {
-        // Mostra mensagem de erro
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Erro ao salvar: $e")),
         );
@@ -149,12 +142,6 @@ class _TradePageState extends State<TradePage> {
                     dialogBackgroundColor: Colors.black,
                     textTheme: const TextTheme(
                       bodyMedium: TextStyle(color: Colors.white),
-                    ),
-                    colorScheme: ColorScheme.dark(
-                      primary: Colors.teal,
-                      onPrimary: Colors.black,
-                      surface: Colors.grey[900]!,
-                      onSurface: Colors.white,
                     ),
                   ),
                   child: child!,
@@ -242,11 +229,16 @@ class _TradePageState extends State<TradePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("Negociação"),
+        centerTitle: true,
+        title: Text(
+          "Negociação",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Container(
-        color: Colors.black,
-        padding: const EdgeInsets.all(12),
+        color: Color(0xFF050811),
+        padding: const EdgeInsets.all(10),
         child: SingleChildScrollView(
           child: Form(
             key: _formKey,
@@ -256,15 +248,19 @@ class _TradePageState extends State<TradePage> {
                 Row(
                   children: [
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
+                      duration: const Duration(milliseconds: 200),
                       curve: Curves.easeInOut,
-                      width: _tradeType == "COMPRA" ? 200 : 150,
-                      height: 55,
+                      width: _tradeType == ""
+                          ? 180
+                          : _tradeType == "COMPRA"
+                              ? 220
+                              : 140,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: _tradeType == "COMPRA"
-                            ? Colors.green
-                            : Colors.grey[600],
-                        borderRadius: BorderRadius.circular(10),
+                            ? Color(0xFF16C784)
+                            : Color(0xFF1E274F),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       child: TextButton(
                         onPressed: () {
@@ -275,9 +271,9 @@ class _TradePageState extends State<TradePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: const [
                               Icon(Icons.add_rounded,
-                                  color: Colors.white, size: 30),
-                              SizedBox(width: 6),
-                              Text("COMPRA",
+                                  color: Colors.white, size: 28),
+                              SizedBox(width: 2),
+                              Text("BUY",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18)),
                             ],
@@ -285,17 +281,21 @@ class _TradePageState extends State<TradePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 10),
                     AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
+                      duration: const Duration(milliseconds: 200),
                       curve: Curves.easeInOut,
-                      width: _tradeType == "VENDA" ? 200 : 150,
-                      height: 55,
+                      width: _tradeType == ""
+                          ? 180
+                          : _tradeType == "VENDA"
+                              ? 220
+                              : 140,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: _tradeType == "VENDA"
-                            ? Colors.red
-                            : Colors.grey[600],
-                        borderRadius: BorderRadius.circular(10),
+                            ? Color(0xFFF23D4C)
+                            : Color(0xFF1E274F),
+                        borderRadius: BorderRadius.circular(25),
                       ),
                       child: TextButton(
                         onPressed: () {
@@ -306,9 +306,9 @@ class _TradePageState extends State<TradePage> {
                             mainAxisSize: MainAxisSize.min,
                             children: const [
                               Icon(Icons.remove_rounded,
-                                  color: Colors.white, size: 30),
-                              SizedBox(width: 6),
-                              Text("VENDA",
+                                  color: Colors.white, size: 28),
+                              SizedBox(width: 4),
+                              Text("SELL",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 18)),
                             ],

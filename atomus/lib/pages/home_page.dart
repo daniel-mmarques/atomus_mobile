@@ -1,8 +1,9 @@
+import 'package:flutter/material.dart';
 import 'portfolio_page.dart';
-import 'configuracoes_page.dart';
+import 'settings_page.dart';
 import 'historico_page.dart';
 import 'search_page.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,71 +22,85 @@ class _HomePageState extends State<HomePage> {
     pc = PageController(initialPage: paginaAtual);
   }
 
-  setPaginaAtual(pagina) {
-    setState(() {
-      paginaAtual = pagina;
-    });
+  @override
+  void dispose() {
+    pc.dispose();
+    super.dispose();
+  }
+
+  void _onIconTap(int index) {
+    HapticFeedback.lightImpact();
+    pc.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+    setState(() => paginaAtual = index);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        controller: pc,
-        onPageChanged: setPaginaAtual,
+      backgroundColor: const Color(0xFF050811),
+      body: Stack(
         children: [
-          SearchPage(),
-          PortfolioPage(),
-          HistoricoPage(),
-          ConfiguracoesPage(),
-        ],
-      ),
-      bottomNavigationBar: Container(
-        height: 55,
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.black,
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedAlign(
-              alignment: _getAlignmentForIndex(paginaAtual),
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCCFF00),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildNavigationButton(
-                    index: 0,
-                    icon: Icons.search_outlined,
-                    activeIcon: Icons.search),
-                _buildNavigationButton(
-                    index: 1,
-                    icon: Icons.dashboard_outlined,
-                    activeIcon: Icons.dashboard_rounded),
-                _buildNavigationButton(
-                    index: 2,
-                    icon: Icons.history_outlined,
-                    activeIcon: Icons.history_rounded),
-                _buildNavigationButton(
-                    index: 3,
-                    icon: Icons.settings_outlined,
-                    activeIcon: Icons.settings),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: PageView(
+              controller: pc,
+              onPageChanged: (index) => setState(() => paginaAtual = index),
+              physics: const NeverScrollableScrollPhysics(),
+              children: const [
+                SearchPage(),
+                PortfolioPage(),
+                HistoricoPage(),
+                SettingsPage(),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            left: 8,
+            right: 8,
+            bottom: 6,
+            child: Container(
+              height: 65,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1C1F26),
+                borderRadius: BorderRadius.circular(28),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildNavigationButton(
+                    index: 0,
+                    icon: Icons.search_outlined,
+                    iconSelected: Icons.search_rounded,
+                    title: "Search",
+                  ),
+                  _buildNavigationButton(
+                    index: 1,
+                    icon: Icons.dashboard_outlined,
+                    iconSelected: Icons.dashboard_rounded,
+                    title: "Wallet",
+                  ),
+                  _buildNavigationButton(
+                    index: 2,
+                    icon: Icons.history_outlined,
+                    iconSelected: Icons.history_rounded,
+                    title: "History",
+                  ),
+                  _buildNavigationButton(
+                    index: 3,
+                    icon: Icons.manage_accounts_outlined,
+                    iconSelected: Icons.manage_accounts_rounded,
+                    title: "Account",
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -93,46 +108,43 @@ class _HomePageState extends State<HomePage> {
   Widget _buildNavigationButton({
     required int index,
     required IconData icon,
-    required IconData activeIcon,
+    required IconData iconSelected,
+    required String title,
   }) {
-    final isActive = paginaAtual == index;
+    final bool isActive = paginaAtual == index;
 
     return GestureDetector(
       onTap: () => _onIconTap(index),
-      child: SizedBox(
-        width: 50,
-        height: 50,
-        child: Icon(
-          isActive ? activeIcon : icon,
-          color: isActive ? Colors.black : const Color(0xFFBBBBBB),
-          size: isActive ? 25 : 20, // Ícone maior quando ativo
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? const Color(0xFF3861FB) : Colors.transparent,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isActive ? iconSelected : icon,
+              color: isActive ? Colors.white : const Color(0xFFBBBBBB),
+              size: isActive ? 28 : 26,
+            ),
+            if (isActive)
+              Padding(
+                padding: const EdgeInsets.only(left: 6),
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -0.25,
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
-  }
-
-  void _onIconTap(int index) {
-    pc.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    );
-    setPaginaAtual(index);
-  }
-
-  Alignment _getAlignmentForIndex(int index) {
-    // Corrigindo os alinhamentos para 4 botões
-    switch (index) {
-      case 0:
-        return Alignment(-1, 0);
-      case 1:
-        return Alignment(-0.335, 0);
-      case 2:
-        return Alignment(0.335, 0);
-      case 3:
-        return Alignment(1, 0);
-      default:
-        return Alignment.center;
-    }
   }
 }

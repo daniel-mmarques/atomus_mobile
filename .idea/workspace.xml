@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0960831d-19f9-4746-9781-1c3944803db0" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/atomus/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/meu_aplicativo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/meu_aplicativo.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/configuracoes_page.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/historico_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/historico_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/home_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/login_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/login_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/portfolio_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/portfolio_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/search_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/search_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/splashScreen.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/pages/trade_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/pages/trade_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/broker_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/broker_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/portfolio_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/portfolio_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/product_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/product_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/search_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/search_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/trade_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/trade_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/repositories/user_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/repositories/user_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/services/portfolio_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/services/portfolio_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/services/trade_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/services/trade_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/widgets/card.dart" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/widgets/history_item.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/widgets/history_item.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/widgets/ticker_list_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/widgets/ticker_list_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/lib/widgets/ticker_square_card.dart" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/lib/widgets/ticker_square_card.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/atomus/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/atomus/pubspec.yaml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 5
+}]]></component>
+  <component name="ProjectId" id="2y8xryiYgTFR6OffMr9nz1LfIuw" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "mob/feat/1",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/home/daniel/repository/personal/atomus_mobile",
+    "show.migrate.to.gradle.popup": "false"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0960831d-19f9-4746-9781-1c3944803db0" name="Changes" comment="" />
+      <created>1749230203778</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749230203778</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,4 +1,4 @@
-import 'package:atomus/pages/splashScreen.dart';
+import 'package:atomus/pages/check_auth_page.dart';
 
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ class MeuAplicativo extends StatelessWidget {
     return MaterialApp(
       title: 'Atomus',
       debugShowCheckedModeBanner: false,
-      home: Splashscreen(),
+      home: CheckAuthPage(),
     );
   }
 }

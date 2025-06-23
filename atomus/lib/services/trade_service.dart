@@ -91,7 +91,7 @@ class TradeService extends ChangeNotifier {
 
     try {
       final trade = Trade(
-        userId: 7,
+        userId: 1,
         tradeType: tradeType,
         tradeDate: tradeDate,
         brokerId: brokerId,

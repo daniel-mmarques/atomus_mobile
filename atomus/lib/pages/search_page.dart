@@ -96,9 +96,9 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xFF050811),
       body: Padding(
-        padding: const EdgeInsets.only(left: 6, right: 6, top: 35),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
         child: Column(
           children: [
             Row(
@@ -106,8 +106,8 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(8),
+                      color: Color(0xFF222531),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextField(
                       onChanged: (value) {
@@ -122,37 +122,9 @@ class _SearchPageState extends State<SearchPage> {
                         prefixIcon:
                             const Icon(Icons.search, color: Colors.white),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 16.0),
+                            vertical: 12, horizontal: 12),
                       ),
                       style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isIconOne = !_isIconOne;
-                    });
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    curve: Curves.bounceInOut,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _isIconOne
-                            ? [Colors.blueGrey, Colors.grey]
-                            : [Colors.yellow, Colors.deepOrange],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      _isIconOne ? Icons.dashboard_rounded : Icons.list_rounded,
-                      size: 35,
-                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -168,18 +140,17 @@ class _SearchPageState extends State<SearchPage> {
                     });
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 150),
+                    duration: const Duration(milliseconds: 200),
                     curve: Curves.easeInOut,
                     padding: const EdgeInsets.symmetric(
                       vertical: 10,
-                      horizontal: 12,
+                      horizontal: 10,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(20),
-                      border: _showSelecionadas
-                          ? Border.all(width: 0.5, color: Colors.white70)
-                          : Border(),
+                      color: _showSelecionadas
+                          ? Color(0xFF1E274F)
+                          : Color(0xFF222531),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Row(
                       children: [
@@ -187,16 +158,43 @@ class _SearchPageState extends State<SearchPage> {
                           _showSelecionadas ? Icons.star : Icons.star_border,
                           color:
                               _showSelecionadas ? Colors.amber : Colors.white,
-                          size: 20,
+                          size: 25,
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 5),
                         Text(
                           'Favoritas',
                           style: TextStyle(
-                            color: Colors.white,
-                          ),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isIconOne = !_isIconOne;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.bounceInOut,
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: _isIconOne
+                            ? [Colors.blueGrey, Colors.grey]
+                            : [Colors.yellow, Colors.deepOrange],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      _isIconOne ? Icons.dashboard_rounded : Icons.list_rounded,
+                      size: 35,
+                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -228,8 +226,8 @@ class _SearchPageState extends State<SearchPage> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 1.2,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
             itemCount: _favoritadas.length,
             itemBuilder: (context, index) {
@@ -292,7 +290,7 @@ class _SearchPageState extends State<SearchPage> {
               ? GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 1.3,
+                    childAspectRatio: 1.25,
                     crossAxisSpacing: 8,
                     mainAxisSpacing: 8,
                   ),

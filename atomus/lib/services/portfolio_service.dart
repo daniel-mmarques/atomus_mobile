@@ -16,97 +16,66 @@ class PortfolioService extends ChangeNotifier {
   String errorMessage = '';
 
   Future<void> loadPortfolioData() async {
+    isLoading = true;
+    hasError = false;
+    notifyListeners();
+
     try {
-      isLoading = true;
-      hasError = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
-
-      portfolioData = await portfolioRepository.getPortfolio();
-      totalAmount = portfolioData!.totalAmount;
-
-      isLoading = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      final data = await portfolioRepository.getPortfolio();
+      portfolioData = data;
+      totalAmount = data.totalAmount;
     } catch (e) {
       hasError = true;
       errorMessage = e.toString();
-
+    } finally {
       isLoading = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      notifyListeners();
     }
   }
 
-  Color _getColor(int index) {
-    final colors = [
-      Colors.blue,
-      Colors.red,
-      Colors.green,
-      Colors.orange,
-      Colors.purple
-    ];
-    return colors[index % colors.length];
-  }
+  static const List<Color> _colors = [
+    Colors.blue,
+    Colors.red,
+    Colors.green,
+    Colors.orange,
+    Colors.purple
+  ];
 
-  List<PieChartSectionData> generateProductSections(int? touchedIndex) {
-    List<PortfolioProductData> products = portfolioData!.portfolioProductData;
-    if (products.isEmpty || totalAmount <= 0) return [];
+  Color _getColor(int index) => _colors[index % _colors.length];
 
-    List<PieChartSectionData> sections = [];
+  List<PieChartSectionData> _generateSections(
+      List<dynamic> dataList, int? touchedIndex, double total) {
+    if (dataList.isEmpty || total <= 0) return [];
 
-    for (int i = 0; i < products.length; i++) {
-      final product = products[i];
-      final percentage = product.totalAmount / totalAmount * 100;
+    return List.generate(dataList.length, (i) {
+      final data = dataList[i];
+      final percentage = (data.totalAmount / total) * 100;
       final isTouched = touchedIndex != null && touchedIndex == i;
 
-      sections.add(PieChartSectionData(
+      return PieChartSectionData(
         color: _getColor(i),
         value: percentage,
         title: '${percentage.floor()}%',
-        radius: isTouched ? 65.0 : 50.0,
+        radius: isTouched ? 65.0 : 55.0,
         titleStyle: TextStyle(
-          fontSize: isTouched ? 20.0 : 16.0,
+          fontSize: isTouched ? 18.0 : 16.0,
           fontWeight: FontWeight.bold,
           color: Colors.black,
         ),
-      ));
-    }
+      );
+    });
+  }
 
-    return sections;
+  List<PieChartSectionData> generateProductSections(int? touchedIndex) {
+    if (portfolioData?.portfolioProductData == null) return [];
+    return _generateSections(
+        portfolioData!.portfolioProductData, touchedIndex, totalAmount);
   }
 
   List<PieChartSectionData> generateTickerSections(
       int? touchedIndex, PortfolioProductData? product) {
     if (product == null || product.portfolioTickerData.isEmpty) return [];
-
-    List<PieChartSectionData> sections = [];
-    final total = product.totalAmount;
-
-    for (int i = 0; i < product.portfolioTickerData.length; i++) {
-      final ticker = product.portfolioTickerData[i];
-      final percentage = ticker.totalAmount / total * 100;
-      final isTouched = touchedIndex != null && touchedIndex == i;
-
-      sections.add(PieChartSectionData(
-        color: _getColor(i),
-        value: percentage,
-        title: '${percentage.floor()}%',
-        radius: isTouched ? 65.0 : 50.0,
-        titleStyle: TextStyle(
-          fontSize: isTouched ? 20.0 : 16.0,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ));
-    }
-
-    return sections;
+    return _generateSections(
+        product.portfolioTickerData, touchedIndex, product.totalAmount);
   }
 }
