@@ -1,7 +1,8 @@
 import 'dart:async';
+import 'package:atomus/models/portfolio/portfolio_data.dart';
 import 'package:atomus/models/portfolio/portfolio_ticker_data.dart';
 import 'package:dio/dio.dart';
-import '../models/portfolio/portfolio_data.dart';
+import 'package:retry/retry.dart';
 import '../models/portfolio/portfolio_product_data.dart';
 
 class PortfolioRepository {
@@ -11,30 +12,44 @@ class PortfolioRepository {
   PortfolioRepository(this._userId, this._dio);
 
   Future<PortfolioData> getPortfolio() async {
-    final response = await _dio.get('/portfolio/$_userId');
-    if (response.statusCode == 200) {
-      return PortfolioData.fromJson(response.data);
-    } else {
-      throw Exception('Failed to fetch portfolio: ${response.statusCode}');
+    try {
+      return await retry(
+        () async {
+          var response = await _dio.get('/portfolio/$_userId');
+          return PortfolioData.fromJson(response.data);
+        },
+        retryIf: (e) => e is DioException || e is TimeoutException,
+      );
+    } catch (e) {
+      throw Exception('Erro ao buscar o portfólio: $e');
     }
   }
 
   Future<PortfolioProductData> getPortfolioProduct(String product) async {
-    var response = await _dio.get('/portfolio/$_userId/$product');
-    if (response.statusCode == 200) {
-      return PortfolioProductData.fromJson(response.data);
-    } else {
-      throw Exception('Failed to fetch portfolio: ${response.statusCode}');
+    try {
+      return await retry(
+        () async {
+          var response = await _dio.get('/portfolio/$_userId/$product');
+          return PortfolioProductData.fromJson(response.data);
+        },
+        retryIf: (e) => e is DioException || e is TimeoutException,
+      );
+    } catch (e) {
+      throw Exception('Erro ao buscar o portfólio do produto "$product": $e');
     }
   }
 
   Future<PortfolioTickerData> getPortfolioTicker() async {
-    var response = await _dio.get('/portfolio/$_userId');
-
-    if (response.statusCode == 200) {
-      return PortfolioTickerData.fromJson(response.data);
-    } else {
-      throw Exception('Failed to fetch portfolio: ${response.statusCode}');
+    try {
+      return await retry(
+        () async {
+          var response = await _dio.get('/portfolio/$_userId');
+          return PortfolioTickerData.fromJson(response.data);
+        },
+        retryIf: (e) => e is DioException || e is TimeoutException,
+      );
+    } catch (e) {
+      throw Exception('Erro ao buscar o portfólio de tickers: $e');
     }
   }
 }

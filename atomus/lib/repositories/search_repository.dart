@@ -1,77 +1,61 @@
 import 'dart:async';
 import 'package:atomus/models/ticker/ticker_details_data.dart';
 import 'package:dio/dio.dart';
-
 import '../models/ticker/ticker_data.dart';
 
 class SearchRepository {
-  final Dio _dio;
+  late final Dio _dio;
 
   SearchRepository(this._dio);
 
   Future<TickerDetailsData> search(String ticker) async {
-    var response = await _dio.get('/search/$ticker');
+    try {
+      var response = await _dio.get('/search/$ticker');
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> json = response.data;
-      final TickerDetailsData tickerDetails = TickerDetailsData.fromJson(json);
-      return tickerDetails;
-    } else {
-      throw Exception('Failed to load ticker details: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        return TickerDetailsData.fromJson(response.data);
+      } else {
+        throw Exception(
+            'Erro ao carregar detalhes do ticker: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao buscar detalhes do ticker: $e');
     }
   }
 
   Future<List<TickerData>> searchListByType(String type) async {
-    var response = await _dio.get('/search/list/$type');
-
-    if (response.statusCode == 200) {
-      final json = response.data;
-      final List<dynamic> tickers = json['stocks'];
-
-      List<TickerData> tickerList = tickers.map((ticker) {
-        return TickerData(
-          stock: ticker['stock'],
-          name: ticker['name'],
-          close: ticker['close'],
-          change: ticker['change'],
-          volume: ticker['volume'],
-          marketCap: ticker['marketCap'],
-          logo: ticker['logo'],
-          sector: ticker['sector'] ?? '',
-          type: ticker['type'],
-        );
-      }).toList();
-
-      return tickerList;
-    } else {
-      throw Exception('Failed to load ativos: ${response.statusCode}');
-    }
+    return await _fetchTickerList('/search/list/$type');
   }
 
   Future<List<TickerData>> searchAllList() async {
-    var response = await _dio.get('/search/list/all');
+    return await _fetchTickerList('/search/list/all');
+  }
 
-    if (response.statusCode == 200) {
-      final json = response.data;
-      final List<dynamic> tickers = json['stocks'];
+  Future<List<TickerData>> _fetchTickerList(String endpoint) async {
+    try {
+      var response = await _dio.get(endpoint);
 
-      List<TickerData> tickerList = tickers.map((ticker) {
-        return TickerData(
-          stock: ticker['stock'],
-          name: ticker['name'],
-          close: ticker['close'],
-          change: ticker['change'],
-          volume: ticker['volume'],
-          marketCap: ticker['marketCap'],
-          logo: ticker['logo'],
-          sector: ticker['sector'] ?? '',
-          type: ticker['type'],
-        );
-      }).toList();
+      if (response.statusCode == 200) {
+        final List<dynamic> tickers = response.data['stocks'];
 
-      return tickerList;
-    } else {
-      throw Exception('Failed to load ativos: ${response.statusCode}');
+        return tickers.map((ticker) {
+          return TickerData(
+            stock: ticker['stock'],
+            name: ticker['name'],
+            close: ticker['close'],
+            change: ticker['change'],
+            volume: ticker['volume'],
+            marketCap: ticker['marketCap'],
+            logo: ticker['logo'],
+            sector: ticker['sector'] ?? '',
+            type: ticker['type'],
+          );
+        }).toList();
+      } else {
+        throw Exception('Erro ao carregar ativos: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Erro ao buscar lista de ativos: $e');
     }
   }
 }

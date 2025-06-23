@@ -33,14 +33,14 @@ class HistoryItem extends StatelessWidget {
         final date = DateFormat('dd/MM/yyyy');
 
         return ListView.builder(
-          padding: EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8),
           itemCount: tradeService.trades.length,
           itemBuilder: (context, index) {
             final operacao = tradeService.trades[index];
             return TradeItem(
               operacao: operacao,
               date: date,
-              onDelete: () => tradeService.deleteTrade(operacao.id),
+              onDelete: () => tradeService.deleteTrade(operacao.id!),
             );
           },
         );
@@ -71,25 +71,24 @@ class _TradeItemState extends State<TradeItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.grey[900],
-            borderRadius: BorderRadius.circular(12.0),
+            color: Color(0xFF222531),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
             children: [
               ListTile(
-                tileColor: Colors.black26,
                 leading: Icon(
                   widget.operacao.tradeType == 'COMPRA'
-                      ? Icons.add
-                      : Icons.remove,
+                      ? Icons.add_rounded
+                      : Icons.remove_rounded,
                   color: widget.operacao.tradeType == 'COMPRA'
-                      ? Colors.green
-                      : Colors.red,
+                      ? Color(0xFF16C784)
+                      : Color(0xFFF23D4C),
+                  size: 30,
                 ),
                 title: Text(
                   '${widget.operacao.quantity}x ${widget.operacao.title}',
@@ -102,9 +101,10 @@ class _TradeItemState extends State<TradeItem> {
                 trailing: IconButton(
                   icon: Icon(
                     isExpanded
-                        ? Icons.keyboard_arrow_up
-                        : Icons.keyboard_arrow_down,
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
                     color: Colors.white,
+                    size: 30,
                   ),
                   onPressed: () {
                     setState(() {
@@ -116,9 +116,9 @@ class _TradeItemState extends State<TradeItem> {
               if (isExpanded) ...[
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.grey[800],
+                    color: Color(0xFF363A4E),
                     borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(8),
+                      bottom: Radius.circular(12),
                     ),
                   ),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 20),
@@ -130,15 +130,17 @@ class _TradeItemState extends State<TradeItem> {
                         children: [
                           Text(
                             'Preço: R\$ ${widget.operacao.unitPrice.toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
+                          SizedBox(height: 4),
                           Text(
                             'Quantidade: ${widget.operacao.quantity}',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
+                          SizedBox(height: 4),
                           Text(
                             'Valor: R\$ ${(widget.operacao.unitPrice * widget.operacao.quantity).toStringAsFixed(2)}',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ],
                       ),
@@ -147,10 +149,12 @@ class _TradeItemState extends State<TradeItem> {
                           IconButton(
                             icon: Icon(Icons.edit, color: Colors.white),
                             onPressed: () {},
+                            iconSize: 25,
                           ),
                           IconButton(
                             icon: Icon(Icons.delete, color: Colors.red),
                             onPressed: widget.onDelete,
+                            iconSize: 25,
                           ),
                         ],
                       ),

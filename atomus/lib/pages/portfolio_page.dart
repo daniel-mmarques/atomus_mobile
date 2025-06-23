@@ -1,6 +1,7 @@
+import 'package:atomus/models/portfolio/portfolio_product_data.dart';
 import 'package:atomus/pages/trade_page.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/portfolio_service.dart';
 
@@ -11,18 +12,23 @@ class PortfolioPage extends StatefulWidget {
   _PortfolioPageState createState() => _PortfolioPageState();
 }
 
+enum ChartLevel { product, ticker }
+
 class _PortfolioPageState extends State<PortfolioPage> {
   int touchedIndex = -1;
-  String ticker = 'B3SA3';
+  String ticker = '';
   double value = 0;
-  double profiability = 0;
+  double profitability = 0;
+  ChartLevel currentLevel = ChartLevel.product;
+  PortfolioProductData? selectedProduct;
+  int currentPageIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    final portfolioService =
-        Provider.of<PortfolioService>(context, listen: false);
-    portfolioService.loadPortfolioData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<PortfolioService>(context, listen: false).loadPortfolioData();
+    });
   }
 
   @override
@@ -30,63 +36,99 @@ class _PortfolioPageState extends State<PortfolioPage> {
     final portfolioService = context.watch<PortfolioService>();
 
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: portfolioService.isLoading
-          ? const Center(
+      backgroundColor: const Color(0xFF050811),
+      body: Stack(
+        children: [
+          if (portfolioService.isLoading)
+            const Center(
               child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFCCFF00))))
-          : portfolioService.hasError
-              ? Center(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF3861FB)),
+              ),
+            )
+          else if (portfolioService.hasError)
+            _buildErrorState(portfolioService.errorMessage)
+          else
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.only(top: 30),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height,
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.error, color: Colors.red, size: 40),
-                      const SizedBox(height: 10),
-                      Text(
-                        'Erro: ${portfolioService.errorMessage}',
-                        style: const TextStyle(color: Colors.red, fontSize: 18),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                )
-              : SingleChildScrollView(
-                  padding: EdgeInsets.only(top: 30, left: 6, right: 6),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[900],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildPortfolioRow('Valor da Carteira',
-                                portfolioService.totalAmount),
-                            _buildPortfolioRow(
-                                'Rentabilidade', portfolioService.totalAmount),
-                            _buildPortfolioRow(
-                                'Selic', portfolioService.totalAmount),
-                            _buildPortfolioRow(
-                                'Ibovespa', portfolioService.totalAmount),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[900],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: loadPieGrafic(),
-                      ),
+                      _buildPortfolioContent(portfolioService),
                     ],
                   ),
                 ),
-      floatingActionButton: loadTradeButton(),
+              ),
+            ),
+          Positioned(
+            right: 16,
+            bottom: 60,
+            child: FloatingActionButton(
+              backgroundColor: const Color(0xFF3861FB),
+              elevation: 4,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const TradePage(),
+                  ),
+                );
+              },
+              child: const Icon(
+                Icons.add_rounded,
+                size: 35,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorState(String errorMessage) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.error, color: Colors.red, size: 40),
+          const SizedBox(height: 10),
+          Text(
+            'Erro: $errorMessage',
+            style: const TextStyle(color: Colors.red, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPortfolioContent(PortfolioService portfolioService) {
+    return Column(children: [
+      _buildPortfolioSummary(portfolioService),
+      const SizedBox(height: 10),
+      _buildCarousel(),
+    ]);
+  }
+
+  Widget _buildPortfolioSummary(PortfolioService portfolioService) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF222531),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildPortfolioRow('Valor da Carteira', portfolioService.totalAmount),
+          _buildPortfolioRow('Rentabilidade', portfolioService.totalAmount),
+          _buildPortfolioRow('Selic', portfolioService.totalAmount),
+          _buildPortfolioRow('Ibovespa', portfolioService.totalAmount),
+        ],
+      ),
     );
   }
 
@@ -111,79 +153,88 @@ class _PortfolioPageState extends State<PortfolioPage> {
     );
   }
 
-  loadPieGrafic() {
-    final portfolioService = context.watch<PortfolioService>();
-    return portfolioService.totalAmount <= 0 ||
-            portfolioService.portfolioData?.portfolioProductData.isEmpty == true
-        ? SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: 200,
-            child: Center(
-              child: Text(
-                'Nenhum dado disponível',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          )
-        : Stack(
-            alignment: Alignment.center,
+  Widget _buildCarousel() {
+    return Column(
+      children: [
+        SizedBox(
+          height: 360,
+          child: PageView(
+            onPageChanged: (index) => setState(() => currentPageIndex = index),
             children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: PieChart(
-                  PieChartData(
-                    sectionsSpace: 5,
-                    centerSpaceRadius: 110,
-                    sections: portfolioService.generatePieChartSections(0),
-                    pieTouchData: PieTouchData(
-                      touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                        setState(() {
-                          if (!event.isInterestedForInteractions ||
-                              pieTouchResponse == null ||
-                              pieTouchResponse.touchedSection == null) {
-                            touchedIndex = -1;
-                            return;
-                          }
-                          touchedIndex = pieTouchResponse
-                              .touchedSection!.touchedSectionIndex;
-                        });
-                      },
-                    ),
-                  ),
-                ),
-              ),
-              Column(
-                children: [
-                  Text(
-                    ticker,
-                    style: TextStyle(color: Colors.white, fontSize: 24),
-                  ),
-                  Text(
-                    value.toStringAsFixed(2),
-                    style: TextStyle(color: Colors.white, fontSize: 22),
-                  ),
-                  Text(
-                    profiability.toStringAsFixed(2),
-                    style: TextStyle(color: Colors.white, fontSize: 20),
-                  ),
-                ],
-              )
+              _buildGraphContainer(_loadPieGraph()),
+              _buildGraphContainer(_loadPieGraph()),
+              _buildGraphContainer(_loadPieGraph()),
             ],
-          );
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(3, (index) => _buildPageIndicator(index)),
+          ),
+        ),
+      ],
+    );
   }
 
-  loadTradeButton() {
-    return FloatingActionButton(
-      backgroundColor: const Color(0xFFCCFF00),
-      child: const Icon(Icons.add, color: Colors.black),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const TradePage(),
+  Widget _buildPageIndicator(int index) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: currentPageIndex == index ? Colors.white : Colors.blueGrey,
+      ),
+    );
+  }
+
+  Widget _buildGraphContainer(Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF222531),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      child: child,
+    );
+  }
+
+  Widget _loadPieGraph() {
+    final portfolioService = context.watch<PortfolioService>();
+    if (portfolioService.totalAmount <= 0 ||
+        portfolioService.portfolioData?.portfolioProductData.isEmpty == true) {
+      return const SizedBox(
+        height: 200,
+        child: Center(
+          child: Text(
+            'Nenhum dado disponível',
+            style: TextStyle(color: Colors.white),
           ),
-        );
-      },
+        ),
+      );
+    }
+    return AspectRatio(
+      aspectRatio: 1,
+      child: PieChart(
+        PieChartData(
+          sectionsSpace: 5,
+          centerSpaceRadius: 90,
+          sections: portfolioService.generateProductSections(touchedIndex),
+          pieTouchData: PieTouchData(
+            touchCallback: (FlTouchEvent event, pieTouchResponse) {
+              if (!event.isInterestedForInteractions ||
+                  pieTouchResponse?.touchedSection == null) {
+                setState(() => touchedIndex = -1);
+                return;
+              }
+              setState(() => touchedIndex =
+                  pieTouchResponse!.touchedSection!.touchedSectionIndex);
+            },
+          ),
+        ),
+      ),
     );
   }
 }

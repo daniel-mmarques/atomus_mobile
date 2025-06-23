@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:atomus/models/portfolio/portfolio_product_data.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -18,73 +16,66 @@ class PortfolioService extends ChangeNotifier {
   String errorMessage = '';
 
   Future<void> loadPortfolioData() async {
+    isLoading = true;
+    hasError = false;
+    notifyListeners();
+
     try {
-      isLoading = true;
-      hasError = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
-
-      portfolioData = await portfolioRepository.getPortfolio();
-      totalAmount = portfolioData!.totalAmount;
-
-      isLoading = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      final data = await portfolioRepository.getPortfolio();
+      portfolioData = data;
+      totalAmount = data.totalAmount;
     } catch (e) {
       hasError = true;
       errorMessage = e.toString();
-
+    } finally {
       isLoading = false;
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        notifyListeners();
-      });
+      notifyListeners();
     }
   }
 
-  Color _generateColor() {
-    double saturation = 0.8;
-    double lightness = 0.4;
+  static const List<Color> _colors = [
+    Colors.blue,
+    Colors.red,
+    Colors.green,
+    Colors.orange,
+    Colors.purple
+  ];
 
-    Random random = Random();
-    double hue = random.nextDouble() * 360;
+  Color _getColor(int index) => _colors[index % _colors.length];
 
-    HSLColor hslColor = HSLColor.fromAHSL(1.0, hue, saturation, lightness);
-    Color rgbColor = hslColor.toColor();
+  List<PieChartSectionData> _generateSections(
+      List<dynamic> dataList, int? touchedIndex, double total) {
+    if (dataList.isEmpty || total <= 0) return [];
 
-    return rgbColor;
+    return List.generate(dataList.length, (i) {
+      final data = dataList[i];
+      final percentage = (data.totalAmount / total) * 100;
+      final isTouched = touchedIndex != null && touchedIndex == i;
+
+      return PieChartSectionData(
+        color: _getColor(i),
+        value: percentage,
+        title: '${percentage.floor()}%',
+        radius: isTouched ? 65.0 : 55.0,
+        titleStyle: TextStyle(
+          fontSize: isTouched ? 18.0 : 16.0,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+        ),
+      );
+    });
   }
 
-  List<PieChartSectionData> generatePieChartSections(int? touchedIndex) {
-    List<PortfolioProductData> products = portfolioData!.portfolioProductData;
-    if (products.isEmpty || totalAmount <= 0) return [];
+  List<PieChartSectionData> generateProductSections(int? touchedIndex) {
+    if (portfolioData?.portfolioProductData == null) return [];
+    return _generateSections(
+        portfolioData!.portfolioProductData, touchedIndex, totalAmount);
+  }
 
-    List<PieChartSectionData> sections = [];
-
-    for (var product in products) {
-      for (var ticker in product.portfolioTickerData) {
-        final percentage = ticker.totalAmount / totalAmount * 100;
-        final isTouched =
-            touchedIndex != null && touchedIndex == sections.length;
-
-        sections.add(PieChartSectionData(
-          color: _generateColor(),
-          value: percentage,
-          title: '${percentage.floor().toString()}%',
-          radius: isTouched ? 70.0 : 55.0,
-          titleStyle: TextStyle(
-            fontSize: isTouched ? 22.0 : 18.0,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ));
-      }
-    }
-
-    return sections;
+  List<PieChartSectionData> generateTickerSections(
+      int? touchedIndex, PortfolioProductData? product) {
+    if (product == null || product.portfolioTickerData.isEmpty) return [];
+    return _generateSections(
+        product.portfolioTickerData, touchedIndex, product.totalAmount);
   }
 }

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/ticker/ticker_data.dart';
 import '../services/search_service.dart';
 import '../widgets/ticker_square_card.dart';
-import '../widgets/ticker_retangular_card.dart';
+import '../widgets/ticker_list_card.dart';
 import 'ticker_details_page.dart';
 
 class SearchPage extends StatefulWidget {
@@ -16,7 +16,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   Future<List<TickerData>>? _tickerListFuture;
-  final List<TickerData> _selecionadas = [];
+  final List<TickerData> _favoritadas = [];
   bool _showSelecionadas = false;
   bool _isIconOne = true;
   String _searchQuery = '';
@@ -74,10 +74,10 @@ class _SearchPageState extends State<SearchPage> {
 
   void _alternarSelecao(TickerData tickerData) {
     setState(() {
-      if (_selecionadas.contains(tickerData)) {
-        _selecionadas.remove(tickerData);
+      if (_favoritadas.contains(tickerData)) {
+        _favoritadas.remove(tickerData);
       } else {
-        _selecionadas.add(tickerData);
+        _favoritadas.add(tickerData);
       }
     });
   }
@@ -96,9 +96,9 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Color(0xFF050811),
       body: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 30),
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 30),
         child: Column(
           children: [
             Row(
@@ -106,8 +106,8 @@ class _SearchPageState extends State<SearchPage> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey[900],
-                      borderRadius: BorderRadius.circular(8),
+                      color: Color(0xFF222531),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: TextField(
                       onChanged: (value) {
@@ -122,13 +122,17 @@ class _SearchPageState extends State<SearchPage> {
                         prefixIcon:
                             const Icon(Icons.search, color: Colors.white),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 16.0),
+                            vertical: 12, horizontal: 12),
                       ),
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
-                const SizedBox(width: 10),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -137,22 +141,32 @@ class _SearchPageState extends State<SearchPage> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    curve: Curves.bounceInOut,
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: _showSelecionadas
-                            ? [Colors.yellow, Colors.deepOrange]
-                            : [Colors.blueGrey, Colors.grey],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+                    curve: Curves.easeInOut,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 10,
                     ),
-                    child: Icon(
-                      _showSelecionadas ? Icons.star : Icons.star_border,
-                      size: 35,
-                      color: _showSelecionadas ? Colors.black : Colors.white,
+                    decoration: BoxDecoration(
+                      color: _showSelecionadas
+                          ? Color(0xFF1E274F)
+                          : Color(0xFF222531),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _showSelecionadas ? Icons.star : Icons.star_border,
+                          color:
+                              _showSelecionadas ? Colors.amber : Colors.white,
+                          size: 25,
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          'Favoritas',
+                          style: TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -166,7 +180,7 @@ class _SearchPageState extends State<SearchPage> {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     curve: Curves.bounceInOut,
-                    padding: const EdgeInsets.all(4),
+                    padding: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: _isIconOne
@@ -175,7 +189,7 @@ class _SearchPageState extends State<SearchPage> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(14),
                     ),
                     child: Icon(
                       _isIconOne ? Icons.dashboard_rounded : Icons.list_rounded,
@@ -198,7 +212,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildSelecionadasGrid() {
-    if (_selecionadas.isEmpty) {
+    if (_favoritadas.isEmpty) {
       return const Center(
         child: Text(
           'Nenhum ativo selecionado.',
@@ -212,24 +226,24 @@ class _SearchPageState extends State<SearchPage> {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 1.2,
-              crossAxisSpacing: 8.0,
-              mainAxisSpacing: 8.0,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
             ),
-            itemCount: _selecionadas.length,
+            itemCount: _favoritadas.length,
             itemBuilder: (context, index) {
-              final ativo = _selecionadas[index];
+              final ativo = _favoritadas[index];
               return TickerSquareCard(
                 tickerData: ativo,
-                selecionadas: _selecionadas,
+                favoritadas: _favoritadas,
                 mostrarDetalhes: _mostrarDetalhes,
                 alternarSelecao: _alternarSelecao,
               );
             },
           )
         : ListView.builder(
-            itemCount: _selecionadas.length,
+            itemCount: _favoritadas.length,
             itemBuilder: (context, index) {
-              final ativo = _selecionadas[index];
+              final ativo = _favoritadas[index];
               return ListTile(
                 leading:
                     const Icon(Icons.check_circle, color: Colors.amberAccent),
@@ -276,16 +290,16 @@ class _SearchPageState extends State<SearchPage> {
               ? GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 1.2,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
+                    childAspectRatio: 1.25,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
                   ),
                   itemCount: filteredTickers.length,
                   itemBuilder: (context, index) {
                     final ativo = filteredTickers[index];
                     return TickerSquareCard(
                       tickerData: ativo,
-                      selecionadas: _selecionadas,
+                      favoritadas: _favoritadas,
                       mostrarDetalhes: _mostrarDetalhes,
                       alternarSelecao: _alternarSelecao,
                     );
@@ -295,8 +309,9 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: filteredTickers.length,
                   itemBuilder: (context, index) {
                     final ativo = filteredTickers[index];
-                    return TickerRetangularCard(
-                      ativo: ativo,
+                    return TickerListCard(
+                      tickerData: ativo,
+                      favoritadas: _favoritadas,
                       mostrarDetalhes: _mostrarDetalhes,
                       alternarSelecao: _alternarSelecao,
                     );
